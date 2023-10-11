@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 
 broker = "RPi3PeterE"
-idCliente = "ibookG4"
+idCliente = "VaioDebian"
 ser = serial.Serial(
     #port='/dev/ttyACM0',\
     port='/dev/cu.usbmodem1d11',
