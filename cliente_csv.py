@@ -1,6 +1,7 @@
-
 import csv 
+import glob
 import json
+import os
 
 from paho.mqtt import client as mqtt_client
 
@@ -22,25 +23,29 @@ def connect_mqtt():
 
 
 def publish(client):
-    with open("/mnt/c/Users/peter/Desktop/TEG/Mediciones/muestra_01-12-2018_mod.csv", 'r') as file:
-        csvreader = csv.reader(file)
-        for row in csvreader:
-            if row == ['name', 'time', 'host', 'region', 'sensor', 'variable']:
-                continue
-            msg = json.dumps({
-                "measurement_type": row[0],
-                "date": row[1],
-                "host_device": row[2],
-                "location": row[3],
-                "sensor": row[4],
-                "value": row[5]
-            })
-            result = client.publish(topic, msg)
-            status = result[0]
-            if status == 0:
-                print(f"Enviando `{msg}` al topico `{topic}`")
-            else:
-                print(f"Fallo al enviar mensaje al topico {topic}")
+
+    os.chdir('/mnt/c/Users/peter/Desktop/TEG/Mediciones/datos_sim_2023/')
+    result = glob.glob('*.{}'.format('csv'))
+    for _file in result:
+        with open(f"/mnt/c/Users/peter/Desktop/TEG/Mediciones/datos_sim_2023/{_file}", 'r') as file:
+            csvreader = csv.reader(file)
+            for row in csvreader:
+                if row == ['name', 'time', 'host', 'region', 'sensor', 'variable']:
+                    continue
+                msg = json.dumps({
+                    "measurement_type": row[0],
+                    "date": row[1],
+                    "host_device": row[2],
+                    "location": row[3],
+                    "sensor": row[4],
+                    "value": row[5]
+                })
+                result = client.publish(topic, msg)
+                status = result[0]
+                if status == 0:
+                    print(f"Enviando `{msg}` al topico `{topic}`")
+                else:
+                    print(f"Fallo al enviar mensaje al topico {topic}")
 
 
 def run():
